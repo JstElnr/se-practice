@@ -51,6 +51,6 @@ def main():
     marks = parse_marks(text)
     computed = stats(marks)
     result(computed)
-
+    
 if __name__ == "__main__":
     main()
