@@ -36,7 +36,7 @@ checker:
   pass: 32
   fail: 0
   error: 0
-  commit:              # git rev-parse --short HEAD  (the commit you ran the checker at)
+  commit:  6ff0305            # git rev-parse --short HEAD  (the commit you ran the checker at)
   known_fails: []
 
 assumptions:
