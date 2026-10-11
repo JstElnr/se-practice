@@ -307,7 +307,7 @@ The contract says times are integers. It does not say what `can_book` does when 
 One of the bounds written in AC1 can never be the *only* reason a request is rejected. Which one,
 and why?
 
-- (write here, in your own words) The bound `0 <= start` can never be the only reason for a rejection. The contract says `now` is at least 0, and AC1 also requires `start > now`. So every request with `start < 0` already fails `start > now`. For example, with `start=-10` and `now=0`, the request is rejected because `-10 > 0` is false.
+- (write here, in your own words) The rule 0 <= start can never be the only reason to reject a request. The contract says that now is always 0 or more, and AC1 also requires start to be greater than now. Therefore, any request with a number less than 0 for start already fails the start > now rule. For example, if start is -10 and now is 0, the request is rejected because -10 > 0 is false.
 
 ---
 
