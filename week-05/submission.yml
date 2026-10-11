@@ -1,0 +1,56 @@
+# week-05/submission.yml — your declaration for this lab.
+#
+# Facts only. Every explanation goes in lab-report.md; nothing here repeats prose.
+# Fill every value. Check it before you push:
+#
+#     python tests/validate_submission.py
+#
+# The validator checks shape, never quality. A green run is the floor, not the grade.
+# If you cannot run Python, fill the file by hand against the comments — a malformed
+# file costs you nothing if the content is there.
+
+schema: 1
+week: "05"
+
+student:
+  name: Yelnur Alga              # <your full name>
+  student_id: 24B031616         # as in KBTU records, e.g. 00X000000
+  github: JstElnr
+
+assistant:
+  tool: Claude
+  model: Claude Sonnet 5.5
+
+language:
+  name: python
+  path: A
+
+counts:
+  tests: 23
+  v1_changed: yes      # comments only: the code lines are identical to v1
+  change_log_rows: 1
+
+checker:
+  # Numbers from YOUR last run of: python tests/check_booking.py
+  # Run it AFTER you write section 10 and paste the output into section 8.2. Expected: 32 / 0 / 0.
+  pass: 32
+  fail: 0
+  error: 0
+  commit:              # git rev-parse --short HEAD  (the commit you ran the checker at)
+  known_fails: []
+
+assumptions:
+  non_integer_time: not-handled
+
+carried:
+  week04_touching: not-submitted
+
+review_findings:
+  - "v1: every condition maps to AC1-AC4 (lab-report §3) and v1 passed F1-F10, so no AC defect was found in the code"
+  - "M10: my first 20 tests all used sorted existing lists and did not catch the AC5 fault; test_unsorted_input_list_keeps_its_order_when_request_is_accepted and ..._rejected catch it"
+  - "critique point 1: can_book(600.5, 660, 540, False, []) returns True because AC1 comparisons never check the type; rejected as a change, declared not-handled"
+
+honesty:
+  v1_unedited: yes
+  can_explain_overlap_without_ai: yes   # yes | no   you will be asked in class
+  ai_usage_disclosed: yes
