@@ -1,0 +1,10 @@
+@startuml
+title Initial AI draft — classes
+class Student { studentId: String }
+class Course { code: String; title: String }
+class CourseOffering { semester: String; capacity: Integer }
+class Enrollment { enrollmentId: String }
+Student -- Enrollment
+CourseOffering -- Enrollment
+Course -- CourseOffering
+@enduml
