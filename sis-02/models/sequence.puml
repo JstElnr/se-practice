@@ -1,0 +1,33 @@
+@startuml
+title Course registration — sequence
+actor Student
+participant Catalog
+participant RegistrationService
+participant EnrollmentRepository
+database EnrollmentStore
+Student -> Catalog : browseCatalog(semester)
+Catalog --> Student : offerings(code, title, offering, availablePlaces)
+Student -> RegistrationService : register(studentId, offeringId)
+group atomic registration operation — no interleaving
+  RegistrationService -> EnrollmentRepository : checkDuplicate(studentId, offeringId)
+  EnrollmentRepository -> EnrollmentStore : findExistingEnrollment(studentId, offeringId)
+  EnrollmentStore --> EnrollmentRepository : existing / none
+  RegistrationService -> EnrollmentRepository : checkCurrentCapacity(offeringId)
+  EnrollmentRepository -> EnrollmentStore : countEnrollmentsAndReadCapacity(offeringId)
+  EnrollmentStore --> EnrollmentRepository : enrollmentCount, capacity
+  alt already enrolled
+    RegistrationService --> Student : reject already enrolled; no state change
+  else course full
+    RegistrationService --> Student : reject course full; no state change
+  else not enrolled and places left
+    RegistrationService -> EnrollmentRepository : create Enrollment(studentId, offeringId)
+    EnrollmentRepository -> EnrollmentStore : save Enrollment
+    EnrollmentStore --> EnrollmentRepository : saved Enrollment
+    RegistrationService --> Student : confirm registration
+  end
+end
+note over RegistrationService,EnrollmentStore
+The duplicate check, capacity check and Enrollment creation are one atomic operation.
+A catalog view is informational and does not reserve a place.
+end note
+@enduml

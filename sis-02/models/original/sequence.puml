@@ -1,0 +1,17 @@
+@startuml
+title Initial AI draft — sequence
+actor Student
+participant Catalog
+participant RegistrationService
+Student -> Catalog : browse catalog
+Catalog --> Student : offerings and places
+Student -> RegistrationService : register for offering
+alt successful
+  RegistrationService -> RegistrationService : create Enrollment
+  RegistrationService --> Student : confirmation
+else course full
+  RegistrationService --> Student : course full
+else already enrolled
+  RegistrationService --> Student : already enrolled
+end
+@enduml
