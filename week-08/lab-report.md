@@ -568,7 +568,30 @@ Rerun the test that was failing, then the full suite.
 The change as a diff (`git diff`, or the old and the new line), then the real run:
 
 ```text
-(paste here)
+diff --git a/week-08/app/src/booking.ts b/week-08/app/src/booking.ts
+index 6c98ec4..1a74c4d 100644
+--- a/week-08/app/src/booking.ts
++++ b/week-08/app/src/booking.ts
+@@ -12,7 +12,7 @@ export function canBook({ start, end, now, blocked, bookings }: {
+   if (end - start > 120) return false;
+   if (blocked) return false;
+   for (const b of bookings) {
+-    if (start <= b.end && end >= b.start) return false;
++    if (start < b.end && end > b.start) return false;
+   }
+   // keep the room's list current with the slot that was just found free
+   bookings.push({ start, end });
+
+
+ RUN  v2.1.9 /home/elnr/Projects/se-practice/week-08/app
+
+ ✓ src/booking.test.ts (19 tests | 18 skipped) 4ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 18 skipped (19)
+   Start at  17:41:06
+   Duration  783ms (transform 83ms, setup 0ms, collect 78ms, tests 4ms, environment 0ms, prepare 117ms)
+
 ```
 
 ### 8.2 The BUG-B patch and the final run
@@ -576,7 +599,67 @@ The change as a diff (`git diff`, or the old and the new line), then the real ru
 The change as a diff, then the real output of the **full** suite. Every test must pass.
 
 ```text
-(paste here)
+diff --git a/week-08/app/src/booking.ts b/week-08/app/src/booking.ts
+index 6c98ec4..1a74c4d 100644
+--- a/week-08/app/src/booking.ts
++++ b/week-08/app/src/booking.ts
+@@ -12,7 +12,7 @@ export function canBook({ start, end, now, blocked, bookings }: {
+   if (end - start > 120) return false;
+   if (blocked) return false;
+   for (const b of bookings) {
+-    if (start <= b.end && end >= b.start) return false;
++    if (start < b.end && end > b.start) return false;
+   }
+   // keep the room's list current with the slot that was just found free
+   bookings.push({ start, end });
+
+    RUN  v2.1.9 /home/elnr/Projects/se-practice/week-08/app
+
+ ❯ src/booking.test.ts (19 tests | 2 failed) 30ms
+   × canBook > AC5: Available request leaves bookings array unchanged 15ms
+     → expected '[{"start":600,"end":660},{"start":660…' to be '[{"start":600,"end":660}]' // Object.is equality
+   × canBook > BUG-B: 720–780 Available, bookings unchanged (AC5) 2ms
+     → expected '[{"start":600,"end":660},{"start":720…' to be '[{"start":600,"end":660}]' // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/booking.test.ts > canBook > AC5: Available request leaves bookings array unchanged
+AssertionError: expected '[{"start":600,"end":660},{"start":660…' to be '[{"start":600,"end":660}]' // Object.is equality
+
+Expected: "[{"start":600,"end":660}]"
+Received: "[{"start":600,"end":660},{"start":660,"end":720}]"
+
+ ❯ src/booking.test.ts:164:38
+    162|     });
+    163|     expect(result).toBe(true);
+    164|     expect(JSON.stringify(bookings)).toBe(before);
+       |                                      ^
+    165|   });
+    166| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/booking.test.ts > canBook > BUG-B: 720–780 Available, bookings unchanged (AC5)
+AssertionError: expected '[{"start":600,"end":660},{"start":720…' to be '[{"start":600,"end":660}]' // Object.is equality
+
+Expected: "[{"start":600,"end":660}]"
+Received: "[{"start":600,"end":660},{"start":720,"end":780}]"
+
+ ❯ src/booking.test.ts:218:38
+    216|     });
+    217|     expect(result).toBe(true);
+    218|     expect(JSON.stringify(bookings)).toBe(before);
+       |                                      ^
+    219|   });
+    220| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 17 passed (19)
+   Start at  17:45:55
+   Duration  894ms (transform 74ms, setup 0ms, collect 81ms, tests 30ms, environment 0ms, prepare 95ms)
+
 ```
 
 ---
