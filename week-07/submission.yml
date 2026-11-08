@@ -1,0 +1,44 @@
+schema: 1
+week: "07"
+
+student:
+  name: Yelnur Alga
+  student_id: 24B031616
+  github: JstElnr
+
+assistant:
+  tool: Grok
+  model: Grok 4
+
+project:
+  baseline: starter
+  bolt_url: not-shared
+  vitest: "2.1.9"
+
+counts:
+  tests_first: 14
+  tests_final: 17
+  first_run_failed: 2
+  review_decisions: 3
+  mutants_detected: 3
+
+checker:
+  pass: 32
+  fail: 1
+  error: 0
+  commit: "29ce51c"
+  known_fails: [L4]
+
+assumptions:
+  invalid_existing_booking: returns-true
+
+review_findings:
+  - "T06: the first suite expected 720-840 to be rejected, but AC2 allows exactly 120 minutes"
+  - "AC5 and X1/X2 were missing from the first generated suite"
+  - "M1 (reject >=120) is detected by the corrected T06"
+
+honesty:
+  first_suite_unedited: yes
+  outputs_unedited: no
+  mutants_restored: yes
+  ai_usage_disclosed: yes
