@@ -129,7 +129,119 @@ Run them **on the buggy code**. Both must fail here. That is the evidence that e
 its bug.
 
 ```text
-(paste here)
+ RUN  v2.1.9 /home/elnr/Projects/se-practice/week-08/app
+
+ ❯ src/booking.test.ts (19 tests | 5 failed) 31ms
+   × canBook > T01: 660–720 (touching after) → true (AC4) 15ms
+     → expected false to be true // Object.is equality
+   × canBook > T08: 570–600 (touching before) → true (AC4) 2ms
+     → expected false to be true // Object.is equality
+   × canBook > AC5: Available request leaves bookings array unchanged 1ms
+     → expected false to be true // Object.is equality
+   × canBook > BUG-A: 660–720 between two touching bookings → true (AC4) 1ms
+     → expected false to be true // Object.is equality
+   × canBook > BUG-B: 720–780 Available, bookings unchanged (AC5) 4ms
+     → expected '[{"start":600,"end":660},{"start":720…' to be '[{"start":600,"end":660}]' // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/booking.test.ts > canBook > T01: 660–720 (touching after) → true (AC4)
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/booking.test.ts:18:7
+     16|         end: 720,
+     17|       })
+     18|     ).toBe(true);
+       |       ^
+     19|   });
+     20| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  src/booking.test.ts > canBook > T08: 570–600 (touching before) → true (AC4)
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/booking.test.ts:88:7
+     86|         end: 600,
+     87|       })
+     88|     ).toBe(true);
+       |       ^
+     89|   });
+     90| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  src/booking.test.ts > canBook > AC5: Available request leaves bookings array unchanged
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/booking.test.ts:163:20
+    161|       bookings,
+    162|     });
+    163|     expect(result).toBe(true);
+       |                    ^
+    164|     expect(JSON.stringify(bookings)).toBe(before);
+    165|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  src/booking.test.ts > canBook > BUG-A: 660–720 between two touching bookings → true (AC4)
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/booking.test.ts:203:7
+    201|         end: 720,
+    202|       })
+    203|     ).toBe(true);
+       |       ^
+    204|   });
+    205| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  src/booking.test.ts > canBook > BUG-B: 720–780 Available, bookings unchanged (AC5)
+AssertionError: expected '[{"start":600,"end":660},{"start":720…' to be '[{"start":600,"end":660}]' // Object.is equality
+
+Expected: "[{"start":600,"end":660}]"
+Received: "[{"start":600,"end":660},{"start":720,"end":780}]"
+
+ ❯ src/booking.test.ts:218:38
+    216|     });
+    217|     expect(result).toBe(true);
+    218|     expect(JSON.stringify(bookings)).toBe(before);
+       |                                      ^
+    219|   });
+    220| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+
+ Test Files  1 failed (1)
+      Tests  5 failed | 14 passed (19)
+   Start at  16:03:45
+   Duration  819ms (transform 113ms, setup 0ms, collect 82ms, tests 31ms, environment 1ms, prepare 191ms)
+
 ```
 
 ---
@@ -141,8 +253,8 @@ One row per defect. At least **BUG-A and BUG-B**. "Suspected cause" is your hypo
 
 | Defect | Test ID | Input | Expected | Actual | Suspected cause (line and why) |
 | --- | --- | --- | --- | --- | --- |
-| BUG-A | | | | | |
-| BUG-B | | | | | |
+| BUG-A | T01 | `start = 660, end = 720, now = 540, bookings = [{start: 600, end: 660}]` | `true` — the request should be available because it only touches the existing booking at the boundary. AC4 allows bookings to touch without overlapping. | `false` — the function returns false. | Line 14: `if (start <= b.end && end >= b.start) return false;`. The `<=` and `>=` operators incorrectly treat touching endpoints as an overlap. |
+| BUG-B | BUG-B | `start = 720, end = 780, now = 540, bookings = [{start: 600, end: 660}]` | `true` — the request is available, and the original array must remain unchanged according to AC5. | `true` — but a new booking `{start: 720, end: 780}` is added to the original array. | Line 16: `bookings.push({ start, end });`. This statement modifies the input array, which is forbidden by AC5. |
 
 ---
 

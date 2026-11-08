@@ -187,4 +187,34 @@ describe('canBook', () => {
       })
     ).toBe(true);
   });
+    // BUG-A: a request that touches a booking on BOTH sides must be Available (AC4)
+  it('BUG-A: 660–720 between two touching bookings → true (AC4)', () => {
+    expect(
+      canBook({
+        now: 540,
+        blocked: false,
+        bookings: [
+          { start: 600, end: 660 },
+          { start: 720, end: 780 },
+        ],
+        start: 660,
+        end: 720,
+      })
+    ).toBe(true);
+  });
+
+  // BUG-B: an Available request that touches nothing must not change the bookings (AC5)
+  it('BUG-B: 720–780 Available, bookings unchanged (AC5)', () => {
+    const bookings = [{ start: 600, end: 660 }];
+    const before = JSON.stringify(bookings);
+    const result = canBook({
+      start: 720,
+      end: 780,
+      now: 540,
+      blocked: false,
+      bookings,
+    });
+    expect(result).toBe(true);
+    expect(JSON.stringify(bookings)).toBe(before);
+  });
 });
